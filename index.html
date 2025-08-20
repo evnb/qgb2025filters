@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Library</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.1.1/styles/ag-grid.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.1.1/styles/ag-theme-alpine.css">
+  <style>
+    #filterBar { margin: 1em 0; }
+    #myGrid { height: 600px; width: 100%; }
+  </style>
+</head>
+<body>
+
+  <h2>Game Library</h2>
+  <div id="filterBar">
+    <input id="filterInput" style="width: 400px;" placeholder='e.g. (genre-puzzle OR tag-2d) AND NOT tag-horror'>
+    <button onclick="applyBooleanFilter()">Apply Filter</button>
+  </div>
+
+  <div id="myGrid" class="ag-theme-alpine"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.1.1/dist/ag-grid-community.min.js"></script>
+  <script src="booleanFilter.js"></script>
+  <script>
+    let gridOptions;
+    let fullData = [];
+
+    fetch('games.json')
+      .then(res => res.json())
+      .then(data => {
+        fullData = data;
+        gridOptions = {
+          columnDefs: [
+            { field: "name", filter: true },
+            { field: "url", filter: false, cellRenderer: p => `<a href="${p.value}" target="_blank">Link</a>` },
+            { field: "authors", filter: false, valueFormatter: p => p.value.join(", ") },
+            { field: "tags", filter: false, valueFormatter: p => p.value.join(", ") },
+          ],
+          rowData: fullData,
+          defaultColDef: {
+            sortable: true,
+            resizable: true,
+          }
+        };
+        const gridDiv = document.querySelector('#myGrid');
+        new agGrid.Grid(gridDiv, gridOptions);
+      });
+
+    function applyBooleanFilter() {
+      const query = document.getElementById('filterInput').value.trim();
+      if (!query) {
+        gridOptions.api.setRowData(fullData);
+        return;
+      }
+      try {
+        const ast = parseBooleanQuery(query);
+        const filtered = fullData.filter(row => evaluateAST(ast, row.tags));
+        gridOptions.api.setRowData(filtered);
+      } catch (error) {
+        console.error('Error applying filter:', error);
+        gridOptions.api.setRowData(fullData);
+      }
+    }
+  </script>
+</body>
+</html>
