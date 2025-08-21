@@ -14,7 +14,7 @@
 
   <h2>Game Library</h2>
   <div id="filterBar">
-    <input id="filterInput" style="width: 400px;" placeholder='e.g. (genre-puzzle OR tag-2d) AND NOT tag-horror'>
+    <input id="filterInput" style="width: 400px;" placeholder='e.g. ( genre-puzzle OR tag-2d ) AND NOT tag-horror'>
     <button onclick="applyBooleanFilter()">Apply Filter</button>
   </div>
 
@@ -22,6 +22,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.1.1/dist/ag-grid-community.min.js"></script>
   <script src="booleanFilter.js"></script>
+  <script src="typeahead.js"></script>
   <script>
     let gridOptions;
     let fullData = [];
