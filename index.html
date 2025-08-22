@@ -41,7 +41,7 @@
         gridOptions = {
           columnDefs: [
             { field: "name", filter: true },
-            { field: "url", filter: false, cellRenderer: p => `<a href="${p.value}" target="_blank">Link</a>` },
+            { field: "url", filter: false, cellRenderer: p => `<a href="${p.value}" target="_blank">${p.value}</a>` },
             { field: "authors", filter: false, valueFormatter: p => p.value.join(", ") },
             { field: "tags", filter: false, valueFormatter: p => p.value.join(", ") },
           ],
@@ -79,3 +79,4 @@
   </script>
 </body>
 </html>
+
