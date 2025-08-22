@@ -16,6 +16,7 @@
   <div id="filterBar">
     <input id="filterInput" style="width: 400px;" placeholder='e.g. ( genre-puzzle OR tag-2d ) AND NOT tag-horror'>
     <button onclick="applyBooleanFilter()">Apply Filter</button>
+    <span id="gameCount" style="margin-left: 10px; color: #666;"></span>
   </div>
 
   <div id="myGrid" class="ag-theme-alpine"></div>
@@ -26,6 +27,12 @@
   <script>
     let gridOptions;
     let fullData = [];
+
+    function updateGameCount() {
+      const visibleCount = gridOptions.api.getDisplayedRowCount();
+      const totalCount = fullData.length;
+      document.getElementById('gameCount').textContent = `Showing ${visibleCount} out of ${totalCount} games`;
+    }
 
     fetch('games.json')
       .then(res => res.json())
@@ -46,24 +53,29 @@
         };
         const gridDiv = document.querySelector('#myGrid');
         new agGrid.Grid(gridDiv, gridOptions);
+        updateGameCount(); // Show initial count
       });
 
     function applyBooleanFilter() {
       const query = document.getElementById('filterInput').value.trim();
       if (!query) {
         gridOptions.api.setRowData(fullData);
+        updateGameCount(); // Update count when clearing filter
         return;
       }
       try {
         const ast = parseBooleanQuery(query);
         const filtered = fullData.filter(row => evaluateAST(ast, row.tags));
         gridOptions.api.setRowData(filtered);
+        updateGameCount(); // Update count after applying filter
       } catch (error) {
         console.error('Error applying filter:', error);
         gridOptions.api.setRowData(fullData);
+        updateGameCount(); // Update count after error
       }
     }
+    
+    
   </script>
 </body>
 </html>
-
