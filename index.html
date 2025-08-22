@@ -39,11 +39,12 @@
       .then(data => {
         fullData = data;
         gridOptions = {
+          suppressDragLeaveHidesColumns: true, // Prevents columns from being hidden when dragged outside the grid
           columnDefs: [
             { field: "name", filter: true },
             { field: "url", filter: false, cellRenderer: p => `<a href="${p.value}" target="_blank">${p.value}</a>` },
             { field: "authors", filter: false, valueFormatter: p => p.value.join(", ") },
-            { field: "tags", filter: false, valueFormatter: p => p.value.join(", ") },
+            { field: "tags", filter: false, valueFormatter: p => p.value.join(", "), flex: 2 },
           ],
           rowData: fullData,
           defaultColDef: {
@@ -79,4 +80,5 @@
   </script>
 </body>
 </html>
+
 
